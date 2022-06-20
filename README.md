@@ -50,13 +50,19 @@ The projects consists of three endpoints:
 ### GET /warehouses
 This endpoint allows you to see all the warehouses.
 You can use the following options:
-- Query Parameter page: This is the page number you want to see. If not provided there will be no pagination.
+- Query Parameter `page`: This is the page number you want to see. If not provided there will be no pagination.
+
+Example:
+`/warehouses?page=1`
 
 ### GET /products
 This endpoint allows you to see all the products.
 You can use the following options:
-- Query Parameter page: This is the page number you want to see. If not provided there will be no pagination.
-- Query Parameter f: This is the option to filter by warehouse (id). If not provided there will be no filtering.
+- Query Parameter `page`: This is the page number you want to see. If not provided there will be no pagination.
+- Query Parameter `f`: This is the option to filter by warehouse (id). If not provided there will be no filtering.
+
+Example:
+`/products?f=2&page=3`
 
 ### POST & PUT /product
 This endpoint allows you to create or update a specific product.
