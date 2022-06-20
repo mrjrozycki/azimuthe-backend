@@ -82,6 +82,8 @@ Example:
 ```
 To update a product, you have to provide the same set of data (with the values you want to set)
 
+### All the endpoint are created using django REST framework which means they have a basic graphical interface when using them in browser.
+
 
 
 
