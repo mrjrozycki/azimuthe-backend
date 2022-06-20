@@ -1,94 +1,78 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
-from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+
 
 from .models import Product, Warehouse
 
 from .serializers import ProductSerializer, WarehouseSerializer
 
 
-def home(request):
-    return HttpResponse("Home page")
+class WarehouseList(APIView):
+    def get(self, request):
 
-@api_view(['GET'])
-def products(request):
-    if request.method == 'GET':
-        products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
+        page = request.GET.get('page')
+        # if pagination should work by default
+        # page = request.GET.get('page', 1)
+        per_page = 10
+
+        warehouses = Warehouse.objects.all()
+
+        if page:
+            start = (int(page) - 1) * per_page
+            end = start + per_page
+            warehouses = warehouses[start:end]
+
+        serializer = WarehouseSerializer(warehouses, many=True)
         return Response(serializer.data)
 
-@api_view(['GET', 'POST', 'PUT'])
-def product(request, pk):
-    if request.method == 'GET':
-        try:
-            product = Product.objects.get(pk=pk)
-            serializer = ProductSerializer(product)
-            return Response(serializer.data)
-        except ObjectDoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    elif request.method == 'POST':
+class ProductList(APIView):
+    def get(self, request):
+        f = request.GET.get('f')
+        page = request.GET.get('page')
+        # if pagination should work by default
+        # page = request.GET.get('page', 1)
+        per_page = 10
+
+        if f:
+            products = Product.objects.filter(warehouse=f)
+        else:
+            products = Product.objects.all()
+
+        if page:
+            start = (int(page) - 1) * per_page
+            end = start + per_page
+            products = products[start:end]
+
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data,
+                        status=status.HTTP_200_OK,
+                        )
+
+
+class ProductManage(APIView):  
+    def post(self, request):
         data = request.data
-        data['warehouse'] = pk
         serializer = ProductSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'PUT':
-        # data = JSONParser().parse(request)
-        try:
-            product = Product.objects.get(pk=pk)
-        except ObjectDoesNotExist:
-            return HttpResponse(status=404)
-        serializer = ProductSerializer(product, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-def warehouses(request):
-    if request.method == 'GET':
-        warehouses = Warehouse.objects.all()
-        serializer = WarehouseSerializer(warehouses, many=True)
-        return Response(serializer.data)
     
-@api_view(['GET', 'POST', 'PUT'])
-def warehouse(request, pk):
-    if request.method == 'GET':
+    def put(self, request):
         try:
-            warehouse = Warehouse.objects.get(pk=pk)
-            serializer = WarehouseSerializer(warehouse)
-            return Response(serializer.data)
+            product = Product.objects.get(id=request.data["id"])
+            serializer = ProductSerializer(product, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = WarehouseSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        try:
-            warehouse = Warehouse.objects.get(pk=pk)
-        except ObjectDoesNotExist:
-            return JsonResponse({'error': 'Warehouse does not exist'}, status=404)
-        serializer = WarehouseSerializer(warehouse, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
