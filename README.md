@@ -18,11 +18,14 @@ conda create --name <env> --file requirements-conda.txt
 ```
 
 ### Set Up Database
-Project is also using a little bit more advanced databse than sqlite, which is postgresql. You can run it by running the following command:
+Project can be used with two different databases. One, more professional but needs some configuration - PostgreSQL, and the second one, much more basic but working out of the box - SQLite.
+
+You can start PostgreSQL by running the following command:
 ```shell
 docker-compose up -d
 ```
 To use the postgresql database, you need to create a database with the name: "producttracker".
+
 If you don't want to use the postgresql database, you can revert to sqlite by commenting out the lines 85-94 and uncommenting the lines 78-83 in the productTracker/settings.py file.
 
 ### Run server
