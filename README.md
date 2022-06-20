@@ -7,6 +7,7 @@ This is a very simple REST API written in Python using Django. It is a simple pr
 
 ### Install Dependencies
 For the project to work properly, you need to install packets and dependencies. You can do that by running the following command:
+
 Pip:
 ```shell
 pip install -r requirements.txt
@@ -31,6 +32,14 @@ python manage.py runserver
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+### Database population
+You can populate the database by running the following command:
+```shell
+python manage.py populate
+```
+This command create 50 warehouses and 500 products.
+
 ## Endpoints
 The projects consists of three endpoints:
 
@@ -53,6 +62,7 @@ To create a product, you have to provide the following data:
 - name: The name of the product.
 - stock: The stock of the product.
 - warehouse: The warehouse where the product is stored.
+
 Example:
 ```json
     {
