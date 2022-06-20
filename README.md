@@ -38,7 +38,7 @@ You can populate the database by running the following command:
 ```shell
 python manage.py populate
 ```
-This command create 50 warehouses and 500 products.
+This command creates 50 warehouses and 500 products.
 
 ## Endpoints
 The projects consists of three endpoints:
