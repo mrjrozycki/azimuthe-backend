@@ -1,5 +1,6 @@
 # Product Tracker
 
+
 ## Description
 This is a very simple REST API written in Python using Django. It is a simple product tracker that allows you to create, update, and supervise products. 
 
